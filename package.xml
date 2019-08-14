@@ -1,26 +1,18 @@
 <?xml version="1.0"?>
 <package>
     <name>MageConnector</name>
-    <version>1.6</version>
+    <version>2.2.6.0</version>
     <stability>stable</stability>
-    <license>Open Software License (OSL)</license>
+    <license>free</license>
     <channel>community</channel>
     <extends/>
-    <summary>ICEcat to Magento Open Source Connector - rich content in your magento shop</summary>
-    <description>bInTime has released a free &amp; open-source ICEcat connector to Magento - MageConnector
-
-MageConnector will provide you with:
-
-- Thumb pictures of the products at the category product listings
-
-- Product datasheets with images, marketing texts, specs, alternatives and options 
-
-Data presented on datasheets, are taken from Open ICEcat in a real-time and rendered immediately.</description>
-    <notes>In case of bugs\errors while dowmloading, please report them to marina@bintime.com</notes>
-    <authors><author><name>bInTime</name><user>auto-converted</user><email>info@bintime.com</email></author></authors>
-    <date>2010-06-21</date>
-    <time>13:34:07</time>
-    <contents><target name="magelocal"><dir name="Bintime"><dir name="Icecatimport"><dir name="controllers"><file name="ImageController.php" hash="cdf4984c268346088729831b7abdf026"/><file name="ProductController.php" hash="92c91fe0c165a4785e1c0e218f0f16e7"/></dir><dir name="etc"><file name="config.xml" hash="795143b35cc3c1acbc2172858310ddfd"/><file name="system.xml" hash="ae2e088315ad42f3f4407d897a742323"/></dir><dir name="Helper"><dir name="Catalog"><file name="Image.php" hash="d74c2094fc1daae658f2031e55f0a2ca"/></dir><file name="Getdata.php" hash="280c9d863ca2fdbf8ff0509c010fde6f"/><file name="Image.php" hash="1a979cf3e39a39672929c1b8f042e445"/></dir><dir name="Model"><dir name="Catalog"><file name="Category.php" hash="21abeb7a7c2c85db8ce4d2f4ed203f50"/><file name="Product.php" hash="895cafda0d7a1c2304d80e6f0a993084"/><file name="Search.php" hash="99c7eb706e67e01ea8167ebe88fe72d9"/></dir><dir name="System"><dir name="Config"><file name="Attributes.php" hash="23284e0d38677b4544fc87642a6bc8b5"/><file name="LanguageList.xml" hash="391ef56fab212879709780df5a7710e7"/><file name="Locales.php" hash="d72813a472ad555f21248f7b3e5e67d5"/><file name="Subscription.php" hash="db2d782d32830e88fbe2cc87beaebfa3"/></dir></dir><file name="Import.php" hash="431af162bdb9d876670182e703924ff7"/><file name="Observer.php" hash="fc4a227d7b005e75f0530ab7f75a2376"/></dir><dir name="sql"><dir name="icecatimport_setup"><file name="mysql4-install-0.1.0.php" hash="a8f750e7667f8ef0dd077100c9fddf48"/><file name="mysql4-upgrade-0.1.0-0.1.1.php" hash="c0581c5b00420492714bd7e3cc66cb6d"/></dir></dir></dir></dir></target><target name="magelocale"><dir name="en_US"><file name="Bintime_Icecatimport.csv" hash="446a70e5bfc60e4e5429de9993697430"/></dir></target><target name="mageskin"><dir name="frontend"><dir name="default"><dir name="default"><dir name="css"><file name="view_table.css" hash="74eb11cf62d05141d250c933a26cfd0a"/></dir><dir name="js"><file name="product_view.js" hash="d308b475fd6c5dd0ec8ce91a73bb9560"/></dir></dir></dir></dir></target><target name="magedesign"><dir name="frontend"><dir name="default"><dir name="default"><dir name="layout"><file name="icecatimport.xml" hash="2ba9d48105f1f319e097558dc4db88fa"/></dir><dir name="template"><dir name="icecatimport"><file name="media.phtml" hash="ecd0486333a824af2eb9b2b70def14ad"/><file name="view.phtml" hash="36fb6f04ef842359eb27d6fce4e740ce"/></dir></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Bintime_Icecatimport.xml" hash="42e88c21f93cac8ba3185cfdda115b75"/></dir></target></contents>
+    <summary>MageConnector</summary>
+    <description>MageConnector</description>
+    <notes>MageConnector</notes>
+    <authors><author><name>bintime</name><user>admin</user><email>yfedoruck@gmail.com</email></author></authors>
+    <date>2012-07-16</date>
+    <time>13:51:58</time>
+    <contents><target name="magelocal"><dir name="Bintime"><dir name="Icecatimport"><dir name="Block"><file name="Attributes.php" hash="b2fdf16605cd3863b5235d04ce5ef0f9"/><file name="Media.php" hash="a71e447a139b851da50937bccaf8bd37"/><file name="Media.php~" hash="6ecff548d2d48a22ade00976c255abf1"/><file name="Related.php" hash="7ca2ad6520f2644ad1302c02d1cd6853"/><file name="Related.php~" hash="be43b2b34cfbbbacc4470df40ac68dc6"/><file name="Upsell.php" hash="624bd7b9c8708a67079efb2478a5a37d"/><file name="Upsell.php~" hash="bf0fed5cd7fc0d6323fbb12adbfb45db"/></dir><dir name="controllers"><file name="ImageController.php" hash="cdf4984c268346088729831b7abdf026"/><file name="ProductController.php" hash="15cdcc8da3d5067ab33192cc9653024e"/></dir><dir name="etc"><file name="config.xml" hash="2045ab08a2942408fe63a487cbd8e08e"/><file name="system.xml" hash="3224a0f13103fa58ababccd1001bc620"/></dir><dir name="Helper"><dir name="Catalog"><file name="Image.php" hash="36cb92b3afee700fa8e0e12297e14a9d"/></dir><file name="Getdata.php" hash="04bc27d672d3b12445ad5404cbb5ec1a"/><file name="Image.php" hash="9756a2f98df8734355ad4b16668c5316"/><file name="Output.php" hash="27ec513604aee3d69a8515c12b5e39cd"/></dir><file name="iceimport.php" hash="490445e46b38de71e0f77564a5dc73d5"/><dir name="Model"><dir name="Catalog"><file name="Category.php" hash="21abeb7a7c2c85db8ce4d2f4ed203f50"/><file name="Product.php" hash="ffa4f2b1787814c702e75fc3fcf36d2a"/><file name="Search.php" hash="99c7eb706e67e01ea8167ebe88fe72d9"/></dir><file name="Imagescollection.php" hash="718b575ef9472f85c323fa40f80bbd05"/><file name="Import.php" hash="d744d492884aa4e4eccbed492e3a1b51"/><file name="Observered.php" hash="754e3bcae9d6f60b83a30629f1d85a90"/><file name="Observer.php" hash="00ee1f3a4e88798d44a0fd7bb6007c35"/><file name="Relatedcollection.php" hash="2ddf62c43a66c3fd70bf651d0078dbc1"/><dir name="System"><dir name="Config"><file name="Attributes.php" hash="23284e0d38677b4544fc87642a6bc8b5"/><file name="LanguageList.xml" hash="391ef56fab212879709780df5a7710e7"/><file name="Locales.php" hash="b8c699fa2a6f657b6d52d86e656872cc"/><file name="Productname.php" hash="8f91f5a2c75719af27db883b7f5b09ea"/><file name="Subscription.php" hash="db2d782d32830e88fbe2cc87beaebfa3"/></dir></dir></dir><dir name="sql"><dir name="icecatimport_setup"><file name="mysql4-install-0.1.0.php" hash="a8f750e7667f8ef0dd077100c9fddf48"/><file name="mysql4-upgrade-0.1.0-0.1.1.php" hash="67c4e9745e47c8d328dfdee852280b03"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Bintime_Icecatimport.xml" hash="daf681aae3e710568d210313816a9d5f"/></dir></target></contents>
     <compatible/>
-    <dependencies/>
+    <dependencies><required><php><min>5.0.0</min><max>6.0.0</max></php></required></dependencies>
 </package>

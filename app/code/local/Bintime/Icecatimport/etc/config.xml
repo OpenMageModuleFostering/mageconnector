@@ -6,6 +6,17 @@
 		</Bintime_Icecatimport>
 	</modules>
 	<global>
+				<events>
+            <catalog_controller_product_init_after>
+                <observers>
+                    <unique_lol>
+                        <type>singleton</type>
+                        <class>icecatimport/observered</class>
+                        <method>refill</method>
+                    </unique_lol>
+                </observers>
+            </catalog_controller_product_init_after>
+        </events>
 		<helpers>
 			<icecatimport>
 				<class>Bintime_Icecatimport_Helper</class>
@@ -13,9 +24,23 @@
 			<catalog>
 				<rewrite>
 					<image>Bintime_Icecatimport_Helper_Catalog_Image</image>
+<!--
+					<output>Bintime_Icecatimport_Helper_Output</output>
+-->
 				</rewrite>
 			</catalog>
 		</helpers>
+	<blocks>
+			<catalog>
+				<rewrite>
+					<product_view_attributes>Bintime_Icecatimport_Block_Attributes</product_view_attributes>
+					<product_view_media>Bintime_Icecatimport_Block_Media</product_view_media>	
+					<product_list_related>Bintime_Icecatimport_Block_Related</product_list_related>		
+					<product_list_upsell>Bintime_Icecatimport_Block_Upsell</product_list_upsell> 
+				</rewrite>
+			</catalog>		
+
+	</blocks>
 		<models>
             <icecatimport>
                 <class>Bintime_Icecatimport_Model</class>
@@ -39,6 +64,7 @@
             	</rewrite>
             </catalogsearch_mysql4>
 		</models>
+		<!--
 		<routers>
 			<catalog>
 				<rewrite>
@@ -52,6 +78,7 @@
 				</rewrite>
 			</catalog>
 		</routers>
+		-->
 		<resources>
 			<icecatimport_setup>
 				<setup>

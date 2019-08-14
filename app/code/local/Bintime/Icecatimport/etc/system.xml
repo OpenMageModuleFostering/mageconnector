@@ -3,7 +3,7 @@
         <sections>
 			<icecat_root translate="label" module="catalog">
 			<class>separator-top</class>
-            <label>Ice Cat Title</label>
+            <label>Ice Cat</label>
             <tab>catalog</tab>
             <frontend_type>text</frontend_type>
             <sort_order>200</sort_order>
@@ -54,7 +54,7 @@
 			            	<show_in_store>1</show_in_store>
                     	</language>
                         <sku_field translate="label">
-				    		<label>Sku Field</label>
+				    		<label>MPN</label>
 	                        <frontend_type>select</frontend_type>
 	                        <source_model>icecatimport/system_config_attributes</source_model>
 			            	<sort_order>40</sort_order>
@@ -63,7 +63,7 @@
 			            	<show_in_store>1</show_in_store>
                     	</sku_field>
                     	<manufacturer translate="label">
-				    		<label>Manufacturer Field</label>
+				    		<label>Manufacturer Name</label>
 	                        <frontend_type>select</frontend_type>
 	                        <source_model>icecatimport/system_config_attributes</source_model>
 			            	<sort_order>50</sort_order>
@@ -71,6 +71,15 @@
 			            	<show_in_website>1</show_in_website>
 			            	<show_in_store>1</show_in_store>
                     	</manufacturer>
+                    	<productname translate="label">
+				    		<label>Rewrite product name</label>
+	                        <frontend_type>select</frontend_type>
+	                        <source_model>icecatimport/system_config_productname</source_model>
+			            	<sort_order>60</sort_order>
+			            	<show_in_default>1</show_in_default>
+			            	<show_in_website>1</show_in_website>
+			            	<show_in_store>1</show_in_store>
+                    	</productname>
                     </fields>
                 </icecat>
             </groups>

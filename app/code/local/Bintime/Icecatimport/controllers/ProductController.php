@@ -1,5 +1,10 @@
 <?php
-require_once 'Mage/Catalog/controllers/ProductController.php';
+//require_once 'Mage/Catalog/controllers/ProductController.php';
+//hack for compiler mode
+if(!class_exists(Mage_Catalog_ProductController))
+{
+	require_once 'Mage/Catalog/controllers/ProductController.php';
+}
 /**
  * Class rewrites standard product view controller to provide icecat data on the page
  *  @author Sergey Gozhedrianov <info@bintime.com>

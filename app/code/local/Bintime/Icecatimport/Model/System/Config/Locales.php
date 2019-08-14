@@ -11,7 +11,7 @@ class Bintime_Icecatimport_Model_System_Config_Locales
     {
     	$pathToFile = Mage::getRoot().'/code/local/Bintime/Icecatimport/Model/System/Config/';
     	$fileContent = file_get_contents($pathToFile.'LanguageList.xml');
-    	if(!$this->parseXml(utf8_encode($fileContent))){
+	if(!$this->parseXml(utf8_encode($fileContent))){
 				return false;
 		}
 		
