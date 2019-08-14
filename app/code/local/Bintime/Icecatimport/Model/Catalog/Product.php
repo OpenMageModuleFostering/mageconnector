@@ -1,7 +1,7 @@
 <?php
 /**
  * Class overrides base Product Model to provide products icecat data
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Model_Catalog_Product extends Mage_Catalog_Model_Product 
@@ -20,9 +20,11 @@ class Bintime_Icecatimport_Model_Catalog_Product extends Mage_Catalog_Model_Prod
 		else {
 			$manufacturer = $manufacturerId;
 		}
+		$tableName = Mage::getSingleton('core/resource')->getTableName('icecatimport/data');
+		$mappingTable = Mage::getSingleton('core/resource')->getTableName('icecatimport/supplier_mapping');
 		$selectCondition = $connection->select()->
-			from(array('connector' => 'bintime_connector_data'), new Zend_Db_Expr('connector.prod_name'))
-			->joinInner(array('supplier' => 'bintime_supplier_mapping'), "connector.supplier_id = supplier.supplier_id AND supplier.supplier_symbol = {$connection->quote($manufacturer)}")
+			from(array('connector' => $tableName), new Zend_Db_Expr('connector.prod_name'))
+			->joinInner(array('supplier' => $mappingTable), "connector.supplier_id = supplier.supplier_id AND supplier.supplier_symbol = {$connection->quote($manufacturer)}")
 			->where('connector.prod_id = ? ', $this->getSku());
 		$icecatName = $connection->fetchOne($selectCondition);
 		

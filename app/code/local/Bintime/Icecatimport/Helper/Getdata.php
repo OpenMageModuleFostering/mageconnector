@@ -1,7 +1,8 @@
 <?php
 /**
  * 
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ * Class achieves icecat description from Model by recieved SKU and manufacturer
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Helper_Getdata extends Mage_Core_Helper_Abstract
@@ -10,7 +11,13 @@ class Bintime_Icecatimport_Helper_Getdata extends Mage_Core_Helper_Abstract
 	private $error;
 	private $systemError;
 	
+	/**
+	 * Gets product Data and delegates it to Model
+	 * @param Mage_Catalog_Model_Product $_product
+	 * @return Bintime_Icecatimport_Helper_Getdata
+	 */
 	public function getProductDescription($_product){
+		$entityId = $_product->getEntityId();
 		$sku = $_product->getData(Mage::getStoreConfig('icecat_root/icecat/sku_field'));
 	    $manufacturerId = $_product->getData(Mage::getStoreConfig('icecat_root/icecat/manufacturer'));
 		if (Mage::getStoreConfig('icecat_root/icecat/manufacturer') == 'manufacturer'){
@@ -33,14 +40,18 @@ class Bintime_Icecatimport_Helper_Getdata extends Mage_Core_Helper_Abstract
 	    $userPass = Mage::getStoreConfig('icecat_root/icecat/password');
 		
 		$this->iceCatModel = Mage::getSingleton('icecatimport/import');
-		if (!$this->iceCatModel->getProductDescription($sku, $manufacturer, $locale, $userLogin, $userPass)){
+		
+		if (!$this->iceCatModel->getProductDescription($sku, $manufacturer, $locale, $userLogin, $userPass, $entityId)){
 			$this->error = $this->iceCatModel->getErrorMessage();
 			$this->systemError = $this->iceCatModel->getSystemError();
 			return $this;
 		}
+
 		return $this;
 	}
-	
+	/**
+	 * returns true if error during data fetch occured else false
+	 */
 	public function hasError(){
 		if ($this->error || $this->systemError){
 			return true;
@@ -48,10 +59,16 @@ class Bintime_Icecatimport_Helper_Getdata extends Mage_Core_Helper_Abstract
 		return false;
 	}
 	
+	/**
+	 * return error message
+	 */
 	public function getError(){
 		return $this->error;
 	}
 	
+	/**
+	 * return system error
+	 */
 	public function hasSystemError(){
 		if ($this->systemError){
 			return $this->systemError;
@@ -92,6 +109,10 @@ class Bintime_Icecatimport_Helper_Getdata extends Mage_Core_Helper_Abstract
 	public function getEAN(){
 		return $this->iceCatModel->getEAN();
 	}
+	
+	/**
+	 * Form related products list according to store products
+	 */
 	public function getRelatedProducts(){
 		$relatedProducts =$this->iceCatModel->getRelatedProducts();
 		if (empty($relatedProducts)){

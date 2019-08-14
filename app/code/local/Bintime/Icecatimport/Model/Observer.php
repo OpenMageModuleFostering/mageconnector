@@ -1,7 +1,8 @@
 <?php
 /**
+ * Class provides category page with images, cron processing
  * 
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Model_Observer
@@ -17,10 +18,13 @@ class Bintime_Icecatimport_Model_Observer
 	protected $_supplierFile;
 	
 	protected function _construct()
-    {
-        $this->_init('icecatimport/observer');
-    }
-    
+	{
+		$this->_init('icecatimport/observer');
+	}
+	
+	/**
+	 * root method for uploading images to DB
+	 */
 	public function load(){
 		
 		$loadUrl = $this->getLoadURL();
@@ -29,10 +33,10 @@ class Bintime_Icecatimport_Model_Observer
 		try {
 			$this->_productFile = $this->_prepareFile(basename($loadUrl));
 			$this->_supplierFile = $this->_prepareFile(basename($this->_supplierMappingUrl));
-			echo "Start download of datafiles<br>";
+			echo "Data file downloading started <br>";
 			
 			$this->downloadFile($this->_productFile, $loadUrl);
-			echo "Start of supplier mapping file download";
+			echo "Start of supplier mapping file download<br>";
 			$this->downloadFile($this->_supplierFile, $this->_supplierMappingUrl);
 			$this->XMLfile = Mage::getBaseDir('var') . $this->_connectorDir . basename($loadUrl, ".gz");
 			echo "Start Unzipping Data File<br>";
@@ -49,6 +53,10 @@ class Bintime_Icecatimport_Model_Observer
 		}
 	}
 	
+	/**
+	 * parse given XML to SIMPLE XML
+	 * @param string $stringXml
+	 */
 	protected function _parseXml($stringXml){
 		libxml_use_internal_errors(true);
 		$simpleDoc = simplexml_load_string($stringXml);
@@ -62,24 +70,26 @@ class Bintime_Icecatimport_Model_Observer
 		return false;
 	}
 	
+	/**
+	 * Upload supplier mapping list to Database
+	 */
 	protected function _loadSupplierListToDb()
 	{
 		$connection = $this->getDbConnection();
+		$mappingTable = Mage::getSingleton('core/resource')->getTableName('icecatimport/supplier_mapping');
 		try {
 			$connection->beginTransaction();
-			Mage::log($this->_supplierFile);
 			$xmlString = file_get_contents($this->_supplierFile);
 			$xmlDoc = $this->_parseXml($xmlString);
 			if ($xmlDoc) {
-				$connection->truncate('bintime_supplier_mapping');
+				$connection->truncate($mappingTable);
 				$supplierList = $xmlDoc->SupplierMappings->SupplierMapping;
 				foreach ($supplierList as $supplier) {
 					$supplierSymbolList = $supplier->Symbol;
 					$supplierId = $supplier['supplier_id'];
 					foreach($supplierSymbolList as $symbol) {
-						Mage::log($supplierId . " " . $symbol);
 						$symbolName = (string)$symbol;
-						$connection->insert('bintime_supplier_mapping', array('supplier_id' => $supplierId, 'supplier_symbol' => $symbolName));
+						$connection->insert($mappingTable, array('supplier_id' => $supplierId, 'supplier_symbol' => $symbolName));
 					}
 				}
 				$connection->commit();
@@ -91,7 +101,9 @@ class Bintime_Icecatimport_Model_Observer
 			throw new Exception("Icecat Import Terminated: {$e->getMessage()}");
 		}
 	}
-	
+	/**
+	 * retrieve URL of data file that corresponds ICEcat account
+	 */
 	private function getLoadURL(){
 		$subscripionLevel = Mage::getStoreConfig('icecat_root/icecat/icecat_type');
 		if ($subscripionLevel === 'full'){
@@ -102,16 +114,27 @@ class Bintime_Icecatimport_Model_Observer
 		}
 	}
 	
+	/**
+	 * return error messages
+	 */
 	public function getErrorMessage(){
 		return $this->errorMessage;
 	}
 	
+	/**
+	 * getImage URL from DB
+	 * @param string $productSku
+	 * @param string $productManufacturer
+	 */
 	public function getImageURL($productSku, $productManufacturer){
 		$connection = $this->getDbConnection();
 		try {
+			$tableName = Mage::getSingleton('core/resource')->getTableName('icecatimport/data');
+			$mappingTable = Mage::getSingleton('core/resource')->getTableName('icecatimport/supplier_mapping');
+			
 			$selectCondition = $connection->select()
-						->from(array('connector' => 'bintime_connector_data'), new Zend_Db_Expr('connector.prod_img'))
-						->joinInner(array('supplier' => 'bintime_supplier_mapping'), "connector.supplier_id = supplier.supplier_id AND supplier.supplier_symbol = {$this->connection->quote($productManufacturer)}")
+						->from(array('connector' => $tableName), new Zend_Db_Expr('connector.prod_img'))
+						->joinInner(array('supplier' => $mappingTable), "connector.supplier_id = supplier.supplier_id AND supplier.supplier_symbol = {$this->connection->quote($productManufacturer)}")
 						->where('connector.prod_id = ? ', $productSku);
 			$imageURL = $connection->fetchOne($selectCondition);
 			if (empty($imageURL)){
@@ -125,6 +148,9 @@ class Bintime_Icecatimport_Model_Observer
 		}
 	}
 	
+	/**
+	 * Singletong for DB connection
+	 */
 	private function getDbConnection(){
 		if ($this->connection){
 			return $this->connection;
@@ -133,19 +159,23 @@ class Bintime_Icecatimport_Model_Observer
 		return $this->connection;
 	}
 	
+	/**
+	 * Upload Data file to DP
+	 */
 	private function loadFileToDb(){
 		$connection = $this->getDbConnection();
+		$tableName = Mage::getSingleton('core/resource')->getTableName('icecatimport/data');
 		try {
 			$connection->beginTransaction();
 			$fileHandler = fopen($this->XMLfile, "r");
 			if ($fileHandler) {
-				$connection->truncate('bintime_connector_data');
+				$connection->truncate($tableName);
 				while (!feof($fileHandler)) {
 					$row = fgets($fileHandler);
 					$oneLine = explode("\t", $row);
 					if ($oneLine[0]!= 'product_id' && $oneLine[0]!= ''){
 						try{
-							$connection->insert('bintime_connector_data', array('prod_id' => $oneLine[1], 'prod_img' => $oneLine[6], 'prod_name' => $oneLine[12], 'supplier_id' => $oneLine[13]));
+							$connection->insert($tableName, array('prod_id' => $oneLine[1], 'prod_img' => $oneLine[6], 'prod_name' => $oneLine[12], 'supplier_id' => $oneLine[13]));
 						}
 						catch(Exception $e){
 							Mage::log("connector issue: {$e->getMessage()}");
@@ -161,6 +191,9 @@ class Bintime_Icecatimport_Model_Observer
 		}
 	}
 	
+	/**
+	 * unzip Uploaded file
+	 */
 	private function unzipFile(){
 		$gz = gzopen ( $this->_productFile, 'rb' );
 		
@@ -183,6 +216,11 @@ class Bintime_Icecatimport_Model_Observer
 		fclose($fileToWrite);
 	}
 	
+	/**
+	 * Process downloading files
+	 * @param string $destinationFile
+	 * @param string $loadUrl
+	 */
 	private function downloadFile($destinationFile, $loadUrl){
 		$userName = Mage::getStoreConfig('icecat_root/icecat/login');
 		$userPass = Mage::getStoreConfig('icecat_root/icecat/password');
@@ -207,6 +245,10 @@ class Bintime_Icecatimport_Model_Observer
 		fclose($fileToWrite);
 	}
 	
+	/**
+	 * Prepares file and folder for futur download
+	 * @param string $fileName
+	 */
 	protected function _prepareFile($fileName){
 		$varDir =  Mage::getBaseDir('var') . $this->_connectorDir;
 		$filePath = $varDir . $fileName;

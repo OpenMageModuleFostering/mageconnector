@@ -19,7 +19,14 @@
 		<models>
             <icecatimport>
                 <class>Bintime_Icecatimport_Model</class>
+                <resourceModel>icecatimport_resource_eav_mysql4</resourceModel>
             </icecatimport>
+            <icecatimport_resource_eav_mysql4>
+            	<entities>
+            		<data><table>bintime_connector_data</table></data>
+            		<supplier_mapping><table>bintime_supplier_mapping</table></supplier_mapping>
+            	</entities>
+            </icecatimport_resource_eav_mysql4>
             <catalog>
             	<rewrite>
             		<product>Bintime_Icecatimport_Model_Catalog_Product</product>

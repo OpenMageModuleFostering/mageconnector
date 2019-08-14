@@ -1,11 +1,16 @@
 <?php
 /**
- * 
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ * Class retrieves images from icecatimport data table
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Helper_Image extends Mage_Core_Helper_Abstract
 {
+	/**
+	 * Fetch Image URL from DB
+	 * @param Mage_Catalog_Model_Product $_product
+	 * @return string image URL
+	 */
 	public function getImage($_product){
 		$sku = $_product->getData(Mage::getStoreConfig('icecat_root/icecat/sku_field'));
 		

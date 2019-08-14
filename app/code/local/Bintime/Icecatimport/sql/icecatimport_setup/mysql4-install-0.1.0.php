@@ -5,19 +5,19 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-	DROP TABLE IF EXISTS bintime_connector_data;
-	CREATE TABLE {$this->getTable('bintime_connector_data')} (
+	DROP TABLE IF EXISTS {$this->getTable('icecatimport/data')};
+	CREATE TABLE {$this->getTable('icecatimport/data')} (
 		`prod_id` varchar(255) NOT NULL,
 		`prod_img` varchar(255),
 		KEY `PRODUCT_MPN` (`prod_id`)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Bintime Connector product image table';
 	
-	DROP TABLE IF EXISTS bintime_vendor_mapping;
-	CREATE TABLE {$this->getTable('bintime_supplier_mapping')} (
+	DROP TABLE IF EXISTS {$this->getTable('icecatimport/supplier_mapping')};
+	CREATE TABLE {$this->getTable('icecatimport/supplier_mapping')} (
 		`supplier_id` int(11) NOT NULL,
 		`supplier_symbol` VARCHAR(255),
 		KEY `supplier_id` (`supplier_id`)
-	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Bintime Connector vendor mapping table';
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Bintime Connector supplier mapping table';
 	
 ");
 $installer->endSetup();

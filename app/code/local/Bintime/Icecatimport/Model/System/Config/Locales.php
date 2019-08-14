@@ -1,7 +1,7 @@
 <?php
 /**
- * 
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ * Class Provides locales list for Magento BO
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Model_System_Config_Locales

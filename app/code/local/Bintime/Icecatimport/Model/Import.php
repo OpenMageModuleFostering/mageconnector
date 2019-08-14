@@ -1,7 +1,7 @@
 <?php
 /**
- * 
- *  @author Sergey Gozhedrianov <sergy.gzh@gmail.com>
+ * Class performs Curl request to ICEcat and fetches xml data with product description
+ *  @author Sergey Gozhedrianov <info@bintime.com>
  *
  */
 class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
@@ -16,62 +16,75 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 	private $productName;
 	private $relatedProducts = array();
 	private $errorSystemMessage; //depricated
+	private $_cacheKey = 'bintime_icecatimport_';
 	
 	protected function _construct()
-    {
-        $this->_init('icecatimport/import');
-    }
+	{
+		$this->_init('icecatimport/import');
+	}
 	
-	public function getProductDescription($productId, $vendorName, $locale, $userName, $userPass){
-		if (null === $this->simpleDoc){
-			$dataUrl = 'http://data.icecat.biz/xml_s3/xml_server3.cgi';
-			if (empty($productId)) {
-				$this->errorMessage = 'Given product has no MPN (SKU)';
-				return false;
-			}
-			if (empty($vendorName)){
-				$this->errorMessage = "Given product has no manufacturer specified.";
-				return false;
-			}
-			if (empty($locale)) {
-				$this->errorMessage = "Please specify product description locale";
-				return false;
-			}
-			if ( empty($userName)) {
-				$this->errorMessage = "No ICEcat login provided";
-				return false;
-			}
-			 if (empty($userPass)){
-				$this->errorMessage = "No ICEcat password provided";
-				return false;
-			}
-			
-			$getParamsArray = array("prod_id" => $productId,
-									"lang" =>$locale,
-									"vendor" => $vendorName,
-									"output" =>'productxml'
-			);
-			Varien_Profiler::start('Bintime FILE DOWNLOAD:');
-			try{
-				$webClient = new Zend_Http_Client();
-				$webClient->setUri($dataUrl);
-				$webClient->setMethod(Zend_Http_Client::GET);
-				$webClient->setHeaders('Content-Type: text/xml; charset=UTF-8');
-				$webClient->setParameterGet($getParamsArray);
-				$webClient->setAuth($userName, $userPass, Zend_Http_CLient::AUTH_BASIC);
-				$response = $webClient->request();
-				if ($response->isError()){
-					$this->errorMessage = 'Response Status: '.$response->getStatus()." Response Message: ".$response->getMessage();
+	/**
+	 * Perform Curl request with corresponding param check and error processing
+	 * @param int $productId
+	 * @param string $vendorName
+	 * @param string $locale
+	 * @param string $userName
+	 * @param string $userPass
+	 */
+	public function getProductDescription($productId, $vendorName, $locale, $userName, $userPass, $entityId){
+		if (null === $this->simpleDoc) {
+			if (!$cacheDataXml = Mage::app()->getCache()->load($this->_cacheKey . $entityId)) {
+				$dataUrl = 'http://data.icecat.biz/xml_s3/xml_server3.cgi';
+				if (empty($productId)) {
+					$this->errorMessage = 'Given product has no MPN (SKU)';
 					return false;
 				}
+				if (empty($vendorName)){
+					$this->errorMessage = "Given product has no manufacturer specified.";
+					return false;
+				}
+				if (empty($locale)) {
+					$this->errorMessage = "Please specify product description locale";
+					return false;
+				}
+				if ( empty($userName)) {
+					$this->errorMessage = "No ICEcat login provided";
+					return false;
+				}
+				 if (empty($userPass)){
+					$this->errorMessage = "No ICEcat password provided";
+					return false;
+				}
+				
+				$getParamsArray = array("prod_id" => $productId,
+										"lang" =>$locale,
+										"vendor" => $vendorName,
+										"output" =>'productxml'
+				);
+				Varien_Profiler::start('Bintime FILE DOWNLOAD:');
+				try{
+					$webClient = new Zend_Http_Client();
+					$webClient->setUri($dataUrl);
+					$webClient->setMethod(Zend_Http_Client::GET);
+					$webClient->setHeaders('Content-Type: text/xml; charset=UTF-8');
+					$webClient->setParameterGet($getParamsArray);
+					$webClient->setAuth($userName, $userPass, Zend_Http_CLient::AUTH_BASIC);
+					$response = $webClient->request();
+					if ($response->isError()){
+						$this->errorMessage = 'Response Status: '.$response->getStatus()." Response Message: ".$response->getMessage();
+						return false;
+					}
+				}
+				catch (Exception $e) {
+					$this->errorMessage = "Warning: cannot connect to ICEcat. {$e->getMessage()}";
+					return false;
+				}
+				 Varien_Profiler::stop('Bintime FILE DOWNLOAD:');
+				$resultString = $response->getBody();
+				Mage::app()->getCache()->save($resultString, $this->_cacheKey . $entityId);
+			} else {
+				$resultString = $cacheDataXml;
 			}
-			catch (Exception $e) {
-				$this->errorMessage = "Warning: cannot connect to ICEcat. {$e->getMessage()}";
-				return false;
-			}
-			 Varien_Profiler::stop('Bintime FILE DOWNLOAD:');
-			$resultString = $response->getBody();
-			
 			if(!$this->parseXml($resultString)){
 				return false;
 			}
@@ -102,6 +115,9 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		return $this->galleryPhotos;
 	}
 	
+	/**
+	 * load Gallery array from XML
+	 */
 	private function loadGalleryPhotos(){
 		$galleryPhotos = $this->simpleDoc->Product->ProductGallery->ProductPicture;
 		if (!count($galleryPhotos)){
@@ -126,6 +142,11 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		return $this->errorMessage;
 	}
 	
+	/**
+	 * Checks response XML for error messages
+	 * @param int $productId
+	 * @param string $vendorName
+	 */
 	private function checkIcecatResponse($productId, $vendorName){
 		$errorMessage = $this->simpleDoc->Product['ErrorMessage'];
 		if ($errorMessage != ''){
@@ -176,6 +197,9 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		return $this->EAN;
 	}
 	
+	/**
+	 * Form related products Array
+	 */
 	private function loadRelatedProducts(){
 		$relatedProductsArray = $this->simpleDoc->Product->ProductRelated;
 		if(count($relatedProductsArray)){
@@ -195,6 +219,9 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		}
 	}
 	
+	/**
+	 * Form product feature Arrray
+	 */
 	private function loadProductDescriptionList(){
 		$descriptionArray = array();
 		
@@ -218,6 +245,9 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		$this->productDescriptionList = $descriptionArray;
 	}
 	
+	/**
+	 * Form Array of non feature-value product params
+	 */
 	private function loadOtherProductParams(){
 		$this->productDescription = (string) $this->simpleDoc->Product->ProductDescription['ShortDesc'];
 		$this->fullProductDescription = (string)$this->simpleDoc->Product->ProductDescription['LongDesc'];
@@ -230,6 +260,10 @@ class Bintime_Icecatimport_Model_Import extends Mage_Core_Model_Abstract {
 		$this->EAN = (string)$productTag->EANCode['EAN'];
 	}
 	
+	/**
+	 * parse response XML: to SimpleXml
+	 * @param string $stringXml
+	 */
 	private function parseXml($stringXml){
 		libxml_use_internal_errors(true);
 		$this->simpleDoc = simplexml_load_string($stringXml);
