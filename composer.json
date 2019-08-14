@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/MageConnector",
+    "type": "magento-module",
+    "license": "Open-Software-License-(OSL)",
+    "homepage": "",
+    "description": "ICEcat to Magento Open Source Connector - rich content in your magento shop",
+    "authors": [
+    {
+        "name": "bInTime",
+        "email": "info@bintime.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
