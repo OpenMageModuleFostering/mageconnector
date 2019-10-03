@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/MageConnector",
+    "name": "OpenMageModuleFostering\/MageConnector",
     "type": "magento-module",
     "license": "free",
     "homepage": "",
     "description": "MageConnector",
     "authors": [
-    {
-        "name": "bintime",
-        "email": "yfedoruck@gmail.com"
-    }
-],
+        {
+            "name": "bintime",
+            "email": "yfedoruck@gmail.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
